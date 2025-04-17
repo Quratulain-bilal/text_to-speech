@@ -1,0 +1,60 @@
+# Text-to-Speech Robot 🤖
+
+A Streamlit-based application that converts text to speech with customizable voice settings.
+
+![App Screenshot](https://img.icons8.com/fluency/200/000000/robot.png)
+
+## Features
+
+- Convert typed text or uploaded text files to speech
+- Multiple voice options (Male, Female, Child-like, Older Male)
+- Adjustable speech rate and volume
+- Download generated audio as MP3
+- User-friendly interface with robot theme
+
+## Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Quratulain-bilal/text-to_speech.git
+   cd text-to-speech-robot
+Install the required dependencies:
+
+bash
+Copy
+pip install -r requirements.txt
+Run the application:
+
+bash
+Copy
+streamlit run app.py
+Usage
+Enter text directly or upload a .txt file
+
+Select your preferred voice from the dropdown
+
+Adjust speech rate and volume using the sliders
+
+Click "Convert to Speech" to generate the audio
+
+Play the audio directly or download it as an MP3 file
+
+Requirements
+Python 3.7+
+
+Streamlit
+
+pyttsx3
+
+Operating system with TTS engine (Windows works best)
+
+Notes
+On Linux systems, you may need to install espeak and ffmpeg:
+
+bash
+Copy
+sudo apt-get install espeak ffmpeg
+Voice options depend on your system's installed TTS voices
+
+License
+This project is licensed under the MIT License.
