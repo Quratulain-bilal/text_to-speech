@@ -1,45 +1,7 @@
+
 import streamlit as st
-import pyttsx3
-import os
-
-# Initialize pyttsx3 engine
-engine = pyttsx3.init()
-
-# Function to get available voices with descriptive labels
-def get_voices():
-    voices = engine.getProperty('voices')
-    voice_list = []
-    for voice in voices:
-        name = voice.name
-        # Simple heuristic to categorize voices (customize based on your system voices)
-        if "female" in name.lower() or "zira" in name.lower() or "samantha" in name.lower():
-            label = f"{name} (Female)"
-        elif "child" in name.lower() or "hazel" in name.lower():
-            label = f"{name} (Child-like)"
-        elif "male" in name.lower() or "david" in name.lower() or "ravi" in name.lower():
-            label = f"{name} (Male)"
-        elif "old" in name.lower() or "mark" in name.lower():
-            label = f"{name} (Older Male)"
-        else:
-            label = f"{name} (Generic)"
-        voice_list.append((label, voice.id))
-    return voice_list
-
-# Function to convert text to speech
-def text_to_speech(text, voice_id, rate, volume):
-    engine.setProperty('voice', voice_id)
-    engine.setProperty('rate', rate)
-    engine.setProperty('volume', volume / 100)
-    audio_file = "output.mp3"
-    engine.save_to_file(text, audio_file)
-    engine.runAndWait()
-    return audio_file
-
-# Function to read audio file
-def get_audio_file(audio_file):
-    with open(audio_file, "rb") as f:
-        data = f.read()
-    return data
+from gtts import gTTS
+from io import BytesIO
 
 # Streamlit App
 st.set_page_config(page_title="Text to Speech Robot", page_icon="🤖", layout="wide")
@@ -58,7 +20,7 @@ st.markdown("""
 
 # Title and Image
 st.markdown('<div class="title">Text to Speech Robot 🤖</div>', unsafe_allow_html=True)
-st.markdown('<div class="subheader">Choose from many voice </div>', unsafe_allow_html=True)
+st.markdown('<div class="subheader">Powered by Google TTS</div>', unsafe_allow_html=True)
 st.markdown('<img src="https://img.icons8.com/fluency/200/000000/robot.png" class="robot-image">', unsafe_allow_html=True)
 
 # Layout
@@ -79,12 +41,8 @@ with col1:
 
 with col2:
     st.subheader("Speech Settings")
-    voices = get_voices()
-    voice_names = [label for label, _ in voices]
-    selected_voice = st.selectbox("Select Voice:", voice_names, help="Choose a voice like Bachi, Larka, or Old Man!")
-    voice_id = next(id for label, id in voices if label == selected_voice)
-    rate = st.slider("Speech Rate:", 100, 300, 200, help="Adjust how fast the voice speaks")
-    volume = st.slider("Volume (%):", 0, 100, 100, help="Adjust loudness")
+    language = st.selectbox("Language:", ["en", "es", "fr", "de", "hi", "ar"])
+    speed = st.slider("Speed:", 0.5, 2.0, 1.0, 0.1)
 
 # Convert Button
 if st.button("Convert to Speech"):
@@ -92,13 +50,14 @@ if st.button("Convert to Speech"):
         st.error("Please provide some text to convert!")
     else:
         with st.spinner("Generating speech..."):
-            audio_file = text_to_speech(text_input, voice_id, rate, volume)
+            tts = gTTS(text=text_input, lang=language, slow=False)
+            audio_bytes = BytesIO()
+            tts.write_to_fp(audio_bytes)
             st.success("Speech generated successfully!")
-            audio_bytes = get_audio_file(audio_file)
             st.audio(audio_bytes, format="audio/mp3")
             st.download_button(
                 label="Download Audio",
-                data=audio_bytes,
+                data=audio_bytes.getvalue(),
                 file_name="output.mp3",
                 mime="audio/mp3"
             )
